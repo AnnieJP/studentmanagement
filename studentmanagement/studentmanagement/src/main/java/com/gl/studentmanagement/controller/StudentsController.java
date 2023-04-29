@@ -1,5 +1,6 @@
 package com.gl.studentmanagement.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.AuthenticatedPrincipal;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.gl.studentmanagement.entity.Student;
 import com.gl.studentmanagement.service.StudentService;
@@ -51,7 +59,7 @@ public class StudentsController {
 		
 	}
 	
-	@RequestMapping("delete")
+	@RequestMapping("/delete")
 	public String deleteStudent(@RequestParam("studentId") int id, Model theModel) {
 		
 		studentService.deleteById(id);
@@ -79,6 +87,23 @@ public class StudentsController {
 		return "redirect:/students/list";
 	}
 	
+	@RequestMapping(value = "/403")
+	public ModelAndView accesssDenied(Principal user) {
+
+		ModelAndView model = new ModelAndView();
+
+		if (user != null) {
+			model.addObject("msg", "Hi " + user.getName() 
+			+ ", you do not have permission to access this page!");
+		} else {
+			model.addObject("msg", 
+			"You do not have permission to access this page!");
+		}
+
+		model.setViewName("403");
+		return model;
+
+	}
 	
 	
 
